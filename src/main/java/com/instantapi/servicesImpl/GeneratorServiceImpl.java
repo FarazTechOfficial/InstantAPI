@@ -1,8 +1,9 @@
-package com.instantapi.service;
+package com.instantapi.servicesImpl;
 
 import com.instantapi.dto.GeneratorRequest;
 import com.instantapi.dto.ParameterRequest;
 import com.instantapi.generator.ProjectGenerator;
+import com.instantapi.services.GeneratorService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

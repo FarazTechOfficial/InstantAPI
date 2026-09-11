@@ -1,7 +1,7 @@
 package com.instantapi.controller;
 
 import com.instantapi.dto.GeneratorRequest;
-import com.instantapi.service.GeneratorService;
+import com.instantapi.services.GeneratorService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

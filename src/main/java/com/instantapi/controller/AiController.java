@@ -4,7 +4,7 @@ import com.instantapi.dto.AiExplainRequest;
 import com.instantapi.dto.AiExplainResponse;
 import com.instantapi.dto.AiRequest;
 import com.instantapi.dto.GeneratorRequest;
-import com.instantapi.service.AiService;
+import com.instantapi.services.AiService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

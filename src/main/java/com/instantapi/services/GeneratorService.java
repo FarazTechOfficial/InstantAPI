@@ -1,4 +1,4 @@
-package com.instantapi.service;
+package com.instantapi.services;
 
 import com.instantapi.dto.GeneratorRequest;
 

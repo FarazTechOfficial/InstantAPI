@@ -1,8 +1,9 @@
-package com.instantapi.service;
+package com.instantapi.servicesImpl;
 
 import com.instantapi.dto.GeneratorRequest;
 import com.instantapi.dto.ParameterRequest;
 import com.instantapi.dto.AiExplainResponse;
+import com.instantapi.services.AiService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
