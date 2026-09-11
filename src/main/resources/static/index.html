@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstantAPI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>InstantAPI</h1>
+        <p class="subtitle">Create your REST API in seconds</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="ai">AI Mode</button>
+        <button class="tab" data-tab="manual">Manual Mode</button>
+    </div>
+
+    <!-- AI Mode -->
+    <section id="ai-tab" class="tab-content active">
+        <p class="hint">Describe what you need and let InstantAPI prepare the fields for you.</p>
+        <textarea id="ai-prompt" rows="4" placeholder='Create an API for students with name, email, age and university.'></textarea>
+        <button id="ai-generate-btn" class="btn primary">Generate with AI</button>
+        <div id="ai-loading" class="loading hidden">Understanding your request...</div>
+        <div id="ai-error" class="error hidden"></div>
+    </section>
+
+    <!-- Preview / Manual Mode -->
+    <section id="manual-tab" class="tab-content">
+        <div id="manual-section" class="hidden">
+            <p class="hint">Enter the details manually.</p>
+            <label for="service-name">Service Name</label>
+            <input type="text" id="service-name" placeholder="Product">
+            <div id="manual-fields">
+                <div class="field-row header-row">
+                    <span>Data Type</span>
+                    <span>Field Name</span>
+                    <span></span>
+                </div>
+            </div>
+            <button id="add-field-btn" class="btn secondary">+ Add Field</button>
+        </div>
+
+        <div id="preview-section" class="hidden">
+            <p class="hint">AI understood your request — you can edit, add or remove fields below:</p>
+            <div id="preview-service-name" class="preview-name"></div>
+            <div id="preview-fields"></div>
+            <button id="preview-add-field-btn" class="btn secondary">+ Add Field</button>
+        </div>
+
+        <button id="generate-btn" class="btn primary">Generate Project</button>
+        <div id="gen-loading" class="loading hidden">Generating project...</div>
+        <div id="gen-error" class="error hidden"></div>
+    </section>
+
+    <!-- Explanation -->
+    <section id="explain-section" class="hidden">
+        <hr>
+        <p class="hint">Understand your API</p>
+        <div class="explain-row">
+            <input type="text" id="explain-input" placeholder="Ask about this API...">
+            <button id="explain-btn" class="btn secondary">Ask AI</button>
+        </div>
+        <div id="explain-result" class="explain-result hidden"></div>
+        <div id="explain-loading" class="loading hidden">Thinking...</div>
+    </section>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
