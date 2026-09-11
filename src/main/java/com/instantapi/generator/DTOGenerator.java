@@ -14,22 +14,38 @@ public class DTOGenerator {
         code.append("import lombok.Getter;\n");
         code.append("import lombok.NoArgsConstructor;\n");
         code.append("import lombok.Setter;\n");
-        if (request.getParameters().stream().anyMatch(p -> "LocalDate".equals(p.getDataType()))) code.append("import java.time.LocalDate;\n");
+        if (hasLocalDate(request)) code.append("import java.time.LocalDate;\n");
         code.append("\n@Getter\n@Setter\n@NoArgsConstructor\n@AllArgsConstructor\n");
         code.append("public class ").append(className).append("DTO {\n");
         code.append("    private String ").append(idField).append(";\n");
         for (ParameterRequest p : request.getParameters()) {
             if (p.getName().equalsIgnoreCase("id")) continue;
-            code.append("    private ").append(type(p.getDataType())).append(" ").append(p.getName()).append(";\n");
+            code.append("    private ").append(dtoType(p.getDataType())).append(" ").append(p.getName()).append(";\n");
         }
         code.append("}\n");
         return code.toString();
     }
 
-    private String type(String t) {
-        return switch (t) {
-            case "String", "Integer", "Long", "Double", "Float", "Boolean", "LocalDate" -> t;
-            default -> "String";
-        };
+    private boolean hasLocalDate(GeneratorRequest request) {
+        for (ParameterRequest p : request.getParameters()) {
+            if ("LocalDate".equals(p.getDataType())) return true;
+        }
+        return false;
+    }
+
+    private String dtoType(String dataType) {
+        if (dataType == null) return "String";
+        switch (dataType) {
+            case "String":
+            case "Integer":
+            case "Long":
+            case "Double":
+            case "Float":
+            case "Boolean":
+            case "LocalDate":
+                return dataType;
+            default:
+                return "String";
+        }
     }
 }

@@ -18,11 +18,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public String generate(GeneratorRequest request) {
+        // the generator needs a name to work with
         if (request.getServiceName() == null || request.getServiceName().trim().isEmpty()) {
             throw new IllegalArgumentException("Service name is required");
         }
         if (request.getParameters() == null) request.setParameters(new ArrayList<>());
 
+        // clean up the fields before generating
         List<ParameterRequest> parameters = new ArrayList<>();
         boolean hasId = false;
         for (ParameterRequest parameter : request.getParameters()) {
@@ -33,7 +35,8 @@ public class GeneratorServiceImpl implements GeneratorService {
             if (parameter.getName().equalsIgnoreCase("id")) hasId = true;
             parameters.add(parameter);
         }
-        if (!hasId) parameters.add(0, new ParameterRequest("id", "Long"));
+        // every API needs an id, so add one if it's missing
+        if (!hasId) parameters.add(0, new ParameterRequest("id", "String"));
         request.setParameters(parameters);
         return projectGenerator.createProject(request);
     }

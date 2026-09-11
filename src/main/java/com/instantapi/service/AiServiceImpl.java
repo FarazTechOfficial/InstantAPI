@@ -18,7 +18,9 @@ public class AiServiceImpl implements AiService {
 
     @Override
     public GeneratorRequest understand(String prompt) {
-        String message = """
+        // the model is good at figuring out entities, but it needs strict rules
+        // so we always get valid JSON back and never an explanation
+        String instructions = """
                 Convert the user's REST API description into JSON.\n
                 Return exactly this structure (no markdown, no explanation, no extra text):\n
                 {"serviceName":"<EntityName>","parameters":[{"name":"id","dataType":"String"},{"name":"<fieldName>","dataType":"<Type>"}]}\n
@@ -35,11 +37,12 @@ public class AiServiceImpl implements AiService {
                 \n
                 User description: """ + prompt;
 
-        return chatClient.prompt().user(message).call().entity(GeneratorRequest.class);
+        return chatClient.prompt().user(instructions).call().entity(GeneratorRequest.class);
     }
 
     @Override
     public AiExplainResponse explain(String prompt, String serviceName, List<ParameterRequest> fields) {
+        // give the model enough context so its answer is actually about this API
         StringBuilder context = new StringBuilder();
         context.append("The user generated a Spring Boot CRUD API called ").append(serviceName).append(".\n");
         context.append("Fields: ");

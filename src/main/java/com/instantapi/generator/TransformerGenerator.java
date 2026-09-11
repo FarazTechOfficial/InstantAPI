@@ -25,15 +25,16 @@ public class TransformerGenerator {
         code.append("package ").append(packageName).append(".transfer;\n\n");
         code.append("import ").append(packageName).append(".dto.").append(className).append("DTO;\n");
         code.append("import ").append(packageName).append(".entity.").append(className).append(";\n");
-        if (request.getParameters().stream().anyMatch(p -> "LocalDate".equals(p.getDataType()))) code.append("import java.time.LocalDate;\n");
+        if (hasLocalDate(request)) code.append("import java.time.LocalDate;\n");
         code.append("import org.springframework.stereotype.Component;\n");
-        code.append("import java.util.List;\n");
-        code.append("import java.util.stream.Collectors;\n\n");
+        code.append("import java.util.ArrayList;\n");
+        code.append("import java.util.List;\n\n");
         code.append("@Component\n");
         code.append("public class ").append(className).append("Transformer implements Transformer<").append(className).append(", ").append(className).append("DTO> {\n\n");
 
-        // toEntity
         String idCap = NameUtil.className(idField);
+
+        // toEntity
         code.append("    @Override\n    public ").append(className).append(" toEntity(").append(className).append("DTO dto) {\n");
         code.append("        ").append(className).append(" entity = new ").append(className).append("();\n");
         code.append("        entity.set").append(idCap).append("(dto.get").append(idCap).append("());\n");
@@ -53,7 +54,7 @@ public class TransformerGenerator {
         }
         code.append("        return dto;\n    }\n\n");
 
-        // toUpdate
+        // toUpdate - only copy the fields the client actually sent
         code.append("    @Override\n    public ").append(className).append(" toUpdate(").append(className).append(" entity, ").append(className).append("DTO dto) {\n");
         code.append("        if (dto.get").append(idCap).append("() != null) entity.set").append(idCap).append("(dto.get").append(idCap).append("());\n");
         for (ParameterRequest p : params(request)) {
@@ -64,18 +65,36 @@ public class TransformerGenerator {
 
         // toDtoList
         code.append("    @Override\n    public List<").append(className).append("DTO> toDtoList(List<").append(className).append("> entities) {\n");
-        code.append("        return entities.stream().map(this::toDto).collect(Collectors.toList());\n    }\n\n");
+        code.append("        List<").append(className).append("DTO> list = new ArrayList<>();\n");
+        code.append("        for (").append(className).append(" entity : entities) {\n");
+        code.append("            list.add(toDto(entity));\n");
+        code.append("        }\n");
+        code.append("        return list;\n    }\n\n");
 
         // toEntityList
         code.append("    @Override\n    public List<").append(className).append("> toEntityList(List<").append(className).append("DTO> dtos) {\n");
-        code.append("        return dtos.stream().map(this::toEntity).collect(Collectors.toList());\n    }\n");
+        code.append("        List<").append(className).append("> list = new ArrayList<>();\n");
+        code.append("        for (").append(className).append("DTO dto : dtos) {\n");
+        code.append("            list.add(toEntity(dto));\n");
+        code.append("        }\n");
+        code.append("        return list;\n    }\n");
 
         code.append("}\n");
         return code.toString();
     }
 
+    private boolean hasLocalDate(GeneratorRequest request) {
+        for (ParameterRequest p : request.getParameters()) {
+            if ("LocalDate".equals(p.getDataType())) return true;
+        }
+        return false;
+    }
+
     private java.util.List<ParameterRequest> params(GeneratorRequest request) {
-        return request.getParameters().stream().filter(p -> !p.getName().equalsIgnoreCase("id"))
-                .toList();
+        java.util.List<ParameterRequest> list = new java.util.ArrayList<>();
+        for (ParameterRequest p : request.getParameters()) {
+            if (!p.getName().equalsIgnoreCase("id")) list.add(p);
+        }
+        return list;
     }
 }

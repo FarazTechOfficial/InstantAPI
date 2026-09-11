@@ -32,6 +32,7 @@ public class ServiceImplGenerator {
                 "    }\n\n" +
                 "    @Override\n" +
                 "    public " + dto + " save(" + dto + " dto) {\n" +
+                "        // new record, give it a fresh id\n" +
                 "        " + className + " " + field + " = " + field + "Transformer.toEntity(dto);\n" +
                 "        " + field + ".set" + NameUtil.className(field + "Id") + "(UUID.randomUUID().toString());\n" +
                 "        return " + field + "Transformer.toDto(" + field + "Repository.save(" + field + "));\n" +
@@ -45,8 +46,9 @@ public class ServiceImplGenerator {
                 "    }\n\n" +
                 "    @Override\n" +
                 "    public " + dto + " getById(String id) {\n" +
-                "        return " + field + "Transformer.toDto(" + field + "Repository.findById(id).orElseThrow(\n" +
-                "                () -> new ResourceNotFoundException(" + notFound + ")));\n" +
+                "        " + className + " " + field + " = " + field + "Repository.findById(id).orElseThrow(\n" +
+                "                () -> new ResourceNotFoundException(" + notFound + "));\n" +
+                "        return " + field + "Transformer.toDto(" + field + ");\n" +
                 "    }\n\n" +
                 "    @Override\n" +
                 "    public " + dto + " update(String id, " + dto + " dto) {\n" +

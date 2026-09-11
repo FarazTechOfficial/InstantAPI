@@ -16,11 +16,13 @@ public class AiController {
         this.aiService = aiService;
     }
 
+    // turn a prompt into a ready-to-use GeneratorRequest
     @PostMapping("/understand")
     public GeneratorRequest understand(@RequestBody AiRequest request) {
         return aiService.understand(request.getPrompt());
     }
 
+    // answer questions about the generated API
     @PostMapping("/explain")
     public AiExplainResponse explain(@RequestBody AiExplainRequest request) {
         return aiService.explain(request.getPrompt(), request.getServiceName(), request.getFields());

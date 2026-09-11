@@ -204,13 +204,17 @@ public class ProjectGenerator {
                 "import " + p + ".payload.PageableResponse;\n" +
                 "import " + p + ".transfer.Transformer;\n" +
                 "import org.springframework.data.domain.Page;\n\n" +
-                "import java.util.List;\n" +
-                "import java.util.stream.Collectors;\n\n" +
+                "import java.util.ArrayList;\n" +
+                "import java.util.List;\n\n" +
                 "public class Helper {\n\n" +
+                "    // turns a Spring Data Page into a simple response the controller can return\n" +
                 "    public static <E, D> PageableResponse<D> getPageableResponse(Page<E> page, Transformer<E, D> transformer) {\n" +
-                "        List<D> collect = page.getContent().stream().map(transformer::toDto).collect(Collectors.toList());\n" +
+                "        List<D> data = new ArrayList<>();\n" +
+                "        for (E entity : page.getContent()) {\n" +
+                "            data.add(transformer.toDto(entity));\n" +
+                "        }\n" +
                 "        PageableResponse<D> pageableResponse = new PageableResponse<>();\n" +
-                "        pageableResponse.setData(collect);\n" +
+                "        pageableResponse.setData(data);\n" +
                 "        pageableResponse.setPageSize(page.getSize());\n" +
                 "        pageableResponse.setLastPage(page.isLast());\n" +
                 "        pageableResponse.setTotalElements((int) page.getTotalElements());\n" +
