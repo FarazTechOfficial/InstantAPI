@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: instantapi
+    runtime: java
+    buildCommand: "mvn clean package -DskipTests"
+    startCommand: "java -jar target/instantapi-1.0.0.jar --server.port=$PORT"
+    envVars:
+      - key: SERVER_PORT
+        value: "8080"
