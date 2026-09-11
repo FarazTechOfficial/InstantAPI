@@ -4,33 +4,36 @@ import com.instantapi.dto.GeneratorRequest;
 import com.instantapi.dto.ParameterRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Component
 public class DTOGenerator {
-    public String generate(GeneratorRequest request, String className, String packageName) {
-        String idField = NameUtil.fieldName(className) + "Id";
-        StringBuilder code = new StringBuilder();
-        code.append("package ").append(packageName).append(".dto;\n\n");
-        code.append("import lombok.AllArgsConstructor;\n");
-        code.append("import lombok.Getter;\n");
-        code.append("import lombok.NoArgsConstructor;\n");
-        code.append("import lombok.Setter;\n");
-        if (hasLocalDate(request)) code.append("import java.time.LocalDate;\n");
-        code.append("\n@Getter\n@Setter\n@NoArgsConstructor\n@AllArgsConstructor\n");
-        code.append("public class ").append(className).append("DTO {\n");
-        code.append("    private String ").append(idField).append(";\n");
-        for (ParameterRequest p : request.getParameters()) {
-            if (p.getName().equalsIgnoreCase("id")) continue;
-            code.append("    private ").append(dtoType(p.getDataType())).append(" ").append(p.getName()).append(";\n");
-        }
-        code.append("}\n");
-        return code.toString();
+    private final TemplateService templates;
+
+    public DTOGenerator(TemplateService templates) {
+        this.templates = templates;
     }
 
-    private boolean hasLocalDate(GeneratorRequest request) {
+    public String generate(GeneratorRequest request, String className, String packageName) {
+        Map<String, String> vars = templates.commonVars(packageName, className);
+        Map<String, String> dynamic = new LinkedHashMap<>();
+        dynamic.put("imports", importsLine(request));
+        dynamic.put("fieldDeclarations", fieldDeclarations(request));
+        return templates.render("DTO.java", vars, dynamic);
+    }
+
+    private String importsLine(GeneratorRequest request) {
+        return TemplateService.isLocalDate(request.getParameters()) ? "import java.time.LocalDate;" : "";
+    }
+
+    private String fieldDeclarations(GeneratorRequest request) {
+        StringBuilder sb = new StringBuilder();
         for (ParameterRequest p : request.getParameters()) {
-            if ("LocalDate".equals(p.getDataType())) return true;
+            if (p.getName().equalsIgnoreCase("id")) continue;
+            sb.append("    private ").append(dtoType(p.getDataType())).append(" ").append(p.getName()).append(";\n");
         }
-        return false;
+        return sb.toString();
     }
 
     private String dtoType(String dataType) {
